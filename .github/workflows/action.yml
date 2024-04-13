@@ -54,7 +54,7 @@ jobs:
           fi
           
           if [ ! -d "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }}" ]; then
-            echo "Error: "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }} directory not found." >> $GITHUB_STEP_SUMMARY
+            echo "Error: ${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }} directory not found." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           
