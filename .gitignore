@@ -1,2 +1,5 @@
 .idea/
 src/main/__pycache__
+build
+*egg-info
+venv
