@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PATH_TO_ENV: "${{ inputs.country }}/${{ inputs.environment }}"
-      PATH_TO_CERTIFICATE: "${{ inputs.country }}/${{ inputs.environment }}/certificates"
+      PATH_TO_CERTIFICATE: "${{ inputs.certificates }}"
       COUNTRY: "${{ inputs.country }}"
       ENVIRONMENT: "${{ inputs.environment }}"
     steps:
@@ -30,8 +30,19 @@ jobs:
 
       - name: Load Environment Configurations
         run: |
-          chmod +x scripts/env.sh
-          scripts/env.sh $PATH_TO_ENV/config.env
+          
+          ENV_FILE=$PATH_TO_ENV/config.env
+          
+          if [ ! -f "$ENV_FILE" ]; then
+              echo "File .env not found: $ENV_FILE"
+              exit 1
+          fi
+          while IFS= read -r line || [[ -n "$line" ]]; do
+              if [[ $line = \#* ]] || [ -z "$line" ]; then
+                  continue
+              fi
+              echo "$line" >> "$GITHUB_ENV"
+          done <"$ENV_FILE"
 
       - name: Verify Directory Structure and Configuration File
         run: |
