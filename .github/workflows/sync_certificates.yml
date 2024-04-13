@@ -1,16 +1,17 @@
-name: Deploy Certificates to S3
+name: Python CLI to Synchronize Certificates
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       country:
-        description: 'Select the country: Brasil'
+        type: string
         required: true
-        default: 'Brasil'
       environment:
-        description: 'Select the environment: dev'
+        type: string
         required: true
-        default: 'dev'
+      certificates:
+        type: string
+        required: true
 
 jobs:
   deploy:
@@ -25,8 +26,8 @@ jobs:
 
       - name: Load Environment Configurations
         run: |
-          chmod +x .github/scripts/env.sh
-          .github/scripts/env.sh ${{ env.PATH_TO_ENV }}/config.env
+          chmod +x scripts/env.sh
+          scripts/env.sh ${{ env.PATH_TO_ENV }}/config.env
 
       - name: Verify Directory Structure and Configuration File
         run: |
