@@ -19,26 +19,27 @@ runs:
     COUNTRY: "${{ inputs.country }}"
     ENVIRONMENT: "${{ inputs.environment }}"
   steps:
-    - uses: workflows/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
     - name: Load Environment Configurations
       run: |
         chmod +x scripts/env.sh
-        scripts/env.sh ${{ env.PATH_TO_ENV }}/config.env
+        scripts/env.sh $PATH_TO_ENV/config.env
 
     - name: Verify Directory Structure and Configuration File
       run: |
-        if [ ! -f "${{ env.PATH_TO_ENV }}/config.env" ]; then
+        if [ ! -f "$PATH_TO_ENV/config.env" ]; then
           echo "Error: config.env file not found." >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
         
-        if [ ! -d "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }}" ]; then
+        if [ ! -d "$PATH_TO_CERTIFICATE/${{ env.TRUSTSTORE }}" ]; then
           echo "Error: certificates/${{ env.TRUSTSTORE }} directory not found." >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
         
-        if [ ! -d "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TLS }}" ]; then
+        if [ ! -d "$PATH_TO_CERTIFICATE/${{ env.TLS }}" ]; then
           echo "Error: certificates/${{ env.TLS }} directory not found." >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
@@ -51,7 +52,7 @@ runs:
         IFS=' ' read -r -a REQUIRED_VARS_ARRAY <<< "$REQUIRED_VARS"
         MISSING_VARS=()
         for VAR in "${REQUIRED_VARS_ARRAY[@]}"; do
-          if ! grep -qE "^${VAR}=" ${{ env.PATH_TO_ENV }}/config.env; then
+          if ! grep -qE "^${VAR}=" $PATH_TO_ENV/config.env; then
             MISSING_VARS+=("$VAR")
           fi
         done  
@@ -63,7 +64,7 @@ runs:
         echo "All necessary variables are defined in config.env."
 
     - name: Set up Python
-      uses: workflows/setup-python@v3
+      uses: actions/setup-python@v3
       with:
         python-version: '3.12'
 
@@ -71,7 +72,7 @@ runs:
       run: pip install -r requirements.txt
 
     - name: Configure AWS credentials
-      uses: aws-workflows/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
