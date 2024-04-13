@@ -31,33 +31,35 @@ jobs:
       - name: Load Environment Configurations
         run: |
           
-          ENV_FILE=$PATH_TO_ENV/config.env
+          ENV_FILE=${{ env.PATH_TO_ENV }}/config.env
           
           if [ ! -f "$ENV_FILE" ]; then
               echo "File .env not found: $ENV_FILE"
               exit 1
           fi
+          
           while IFS= read -r line || [[ -n "$line" ]]; do
               if [[ $line = \#* ]] || [ -z "$line" ]; then
                   continue
               fi
+              echo "$line"
               echo "$line" >> "$GITHUB_ENV"
           done <"$ENV_FILE"
 
       - name: Verify Directory Structure and Configuration File
         run: |
-          if [ ! -f "$PATH_TO_ENV/config.env" ]; then
-            echo "Error: config.env file not found." >> $GITHUB_STEP_SUMMARY
+          if [ ! -f "${{ env.PATH_TO_ENV }}/config.env" ]; then
+            echo "Error: "${{ env.PATH_TO_ENV }}/config.env" file not found." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           
-          if [ ! -d "$PATH_TO_CERTIFICATE/${{ env.TRUSTSTORE }}" ]; then
-            echo "Error: certificates/${{ env.TRUSTSTORE }} directory not found." >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }}" ]; then
+            echo "Error: "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }} directory not found." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           
-          if [ ! -d "$PATH_TO_CERTIFICATE/${{ env.TLS }}" ]; then
-            echo "Error: certificates/${{ env.TLS }} directory not found." >> $GITHUB_STEP_SUMMARY
+          if [ ! -d "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TLS }}" ]; then
+            echo "Error: ${{ env.PATH_TO_CERTIFICATE }}/${{ env.TLS }} directory not found." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           echo "All directory structure checks have passed successfully."
