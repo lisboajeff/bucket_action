@@ -9,12 +9,12 @@ class Device:
     Class representing a device.
 
     Attributes:
-        actions (dict): A dictionary representing the actions performed on files.
+        actions (dict): A dictionary representing the workflows performed on files.
         path (str): A string representing the path of the device.
 
     Methods:
-        _format_summary: Formats the summary of actions performed on files.
-        write_summary_to_file: Writes the summary of actions to a file.
+        _format_summary: Formats the summary of workflows performed on files.
+        write_summary_to_file: Writes the summary of workflows to a file.
         _determine_sha256_hash: Determines the SHA256 hash of a given file.
         find_files: Finds files with a specific file extension in a specified folder.
 

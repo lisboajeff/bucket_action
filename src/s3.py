@@ -6,15 +6,15 @@ from info import FileInfo
 class S3:
     """
 
-    This class represents a wrapper around the AWS S3 client for performing various actions on a specified bucket.
+    This class represents a wrapper around the AWS S3 client for performing various workflows on a specified bucket.
 
     Attributes:
         s3_client (boto3.client): The AWS S3 client.
         bucket_name (str): The name of the S3 bucket.
-        actions (dict[str, list]): A dictionary to store the performed actions.
+        actions (dict[str, list]): A dictionary to store the performed workflows.
 
     Methods:
-        __init__(self, s3_client, bucket_name: str, actions: dict[str, list]):
+        __init__(self, s3_client, bucket_name: str, workflows: dict[str, list]):
             Initializes a new instance of the S3 class.
 
         get_hashed_s3_objects(self, folder: str = '') -> dict[str, str]:
