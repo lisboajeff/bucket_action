@@ -1,8 +1,9 @@
 #!/bin/bash
 
-COUNTRY=$1
-ENVIRONMENT=$2
-CONFIG_PATH="$COUNTRY/$ENVIRONMENT/config.env"
+CONFIG_PATH="$1"
+FILE_DIRECTORY="$2"
+EXTENSION="$3"
+
 VENV="/tmp/venv_bucket"
 SOURCE="src"
 
@@ -11,8 +12,8 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <COUNTRY> <ENVIRONMENT>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <FILE_DIRECTORY> <EXTENSION>"
     exit 1
 fi
 
@@ -25,11 +26,11 @@ fi
 
 source "$VENV/bin/activate"
 
-if [ ! -f "$SOURCE/requirements.txt" ]; then
+if [ ! -f "requirements.txt" ]; then
     echo "File requirements.txt not found."
     exit 1
 else
-    pip install -r "$SOURCE/requirements.txt"
+    pip install -r "requirements.txt"
 fi
 
 if [ ! -f "$CONFIG_PATH" ]; then
@@ -46,4 +47,6 @@ if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
 echo "AWS Access Key ID and/or AWS Secret Access Key have not been set as environment variables."   exit 1
 fi
 
-python3 "$SOURCE/main.py" "$COUNTRY" "$ENVIRONMENT"
+python3 "$SOURCE/main.py" "$FILE_DIRECTORY:$EXTENSION"
+
+rm s3_sync_report.md
