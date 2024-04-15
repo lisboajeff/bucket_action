@@ -3,27 +3,30 @@ name: Python CLI to Synchronize Certificates
 on:
   workflow_call:
     inputs:
-      country:
+      base_path:
         type: string
-        description: 'Country name'
+        description: 'Repository Path'
         required: true
-      environment:
+      description:
         type: string
-        description: 'Environment'
+        description: 'Description'
         required: true
-      certificates:
+      configuration:
         type: string
-        description: 'Path to certificates'
+        description: 'Environment Configuration'
         required: true
-
+      expression_file_paths:
+        type: string
+        description: 'Expression of files paths : folder:extension,folder_b:extension_b....,folder_n:extension_n'
 jobs:
   reusable_workflow_job:
     runs-on: ubuntu-latest
     env:
-      PATH_TO_ENV: "${{ inputs.country }}/${{ inputs.environment }}"
-      PATH_TO_CERTIFICATE: "${{ inputs.certificates }}"
-      COUNTRY: "${{ inputs.country }}"
-      ENVIRONMENT: "${{ inputs.environment }}"
+      BASE_PATH: "${{ inputs.base_path }}"
+      DESCRIPTION: "${{ inputs.description }}"
+      CONFIGURATION: "${{ inputs.configuration }}"
+      EXPRESSION_FILE_PATHS: "${{ inputs.expression_file_paths }}"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -31,7 +34,7 @@ jobs:
       - name: Load Environment Configurations
         run: |
           
-          ENV_FILE=${{ env.PATH_TO_ENV }}/config.env
+          ENV_FILE=${{ env.CONFIGURATION }}
           
           if [ ! -f "$ENV_FILE" ]; then
               echo "File .env not found: $ENV_FILE"
@@ -48,30 +51,55 @@ jobs:
 
       - name: Verify Directory Structure and Configuration File
         run: |
-          if [ ! -f "${{ env.PATH_TO_ENV }}/config.env" ]; then
-            echo "Error: "${{ env.PATH_TO_ENV }}/config.env" file not found." >> $GITHUB_STEP_SUMMARY
+          
+          if [ ! -d "${{ env.BASE_PATH }}" ]; then
+            echo "Error: ${{ env.BASE_PATH }} directory not found." >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           
-          if [ ! -d "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }}" ]; then
-            echo "Error: ${{ env.PATH_TO_CERTIFICATE }}/${{ env.TRUSTSTORE }} directory not found." >> $GITHUB_STEP_SUMMARY
+          regex='^([a-zA-Z0-9_]+:[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+:[a-zA-Z0-9_]+)*$'
+
+          if [[ ! $EXPRESSION_FILE_PATHS =~ $regex ]]; then
+            echo "Cadeia inválida!"
             exit 1
           fi
           
-          if [ ! -d "${{ env.PATH_TO_CERTIFICATE }}/${{ env.TLS }}" ]; then
-            echo "Error: ${{ env.PATH_TO_CERTIFICATE }}/${{ env.TLS }} directory not found." >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
+          IFS=',' read -ra PAIRS <<< "$input"
+          
+          echo "Verifier $EXPRESSION_FILE_PATHS"
+          
+          for pair in "${PAIRS[@]}"; do
+          
+            folder="${pair%%:*}"
+          
+            extension="${pair##*:}"
+          
+            echo "folder=$folder extension=$extension"
+          
+            if [ ! -d "${{ env.BASE_PATH }}/$folder" ]; then
+              echo "Error: ${{ env.BASE_PATH }}/$folder directory not found." >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+
+            if ls ${{ env.BASE_PATH }}/$folder/*.txt 1> /dev/null 2>&1; then
+              echo "Existe pelo menos um arquivo .txt"
+            else
+              echo "Não existem arquivos .txt na pasta ${{ env.BASE_PATH }}/$folder"
+              exit 1
+            fi
+
+          done
+
           echo "All directory structure checks have passed successfully."
 
       - name: Verify variables in config.env
         env:
-          REQUIRED_VARS: "AWS_REGION BUCKET_NAME TRUSTSTORE TLS"
+          REQUIRED_VARS: "AWS_REGION BUCKET_NAME"
         run: |
           IFS=' ' read -r -a REQUIRED_VARS_ARRAY <<< "$REQUIRED_VARS"
           MISSING_VARS=()
           for VAR in "${REQUIRED_VARS_ARRAY[@]}"; do
-            if ! grep -qE "^${VAR}=" $PATH_TO_ENV/config.env; then
+            if ! grep -qE "^${VAR}=" ${{ env.CONFIGURATION }}; then
               MISSING_VARS+=("$VAR")
             fi
           done  
@@ -101,7 +129,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Sync files to S3
-        run: python bucket_python/src/main.py
+        run: python bucket_python/src/main.py "${{ env.EXPRESSION_FILE_PATHS }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

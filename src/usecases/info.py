@@ -1,15 +1,15 @@
-class FileInfo:
+class Information:
 
-    def __init__(self, virtual_path: str, file_hash: str | None = None, file_hash_old: str | None = None):
+    def __init__(self, file_path: str, file_hash: str | None = None, file_hash_old: str | None = None):
         self._file_hash_old: str | None = file_hash_old
         self._file_hash: str = file_hash
-        self._virtual_path: str = virtual_path
+        self._file_path: str = file_path
 
     def is_file_hash_match(self, file_hash: str) -> bool:
         return self._file_hash == file_hash
 
-    def get_path(self) -> str:
-        return self._virtual_path
+    def get_file_path(self) -> str:
+        return self._file_path
 
     def get_old_hash(self) -> str:
         return self._file_hash_old
