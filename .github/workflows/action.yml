@@ -95,7 +95,7 @@ jobs:
           IFS=' ' read -r -a REQUIRED_VARS_ARRAY <<< "$REQUIRED_VARS"
           MISSING_VARS=()
           for VAR in "${REQUIRED_VARS_ARRAY[@]}"; do
-            if ! grep -qE "^${VAR}=" $PATH_TO_ENV/config.env; then
+            if ! grep -qE "^${VAR}=" ${{ env.CONFIGURATION }}; then
               MISSING_VARS+=("$VAR")
             fi
           done  
