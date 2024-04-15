@@ -63,8 +63,8 @@ jobs:
 
             echo "$line"
           
-            folder=${$line%=*}
-                  
+            folder="$(echo $line | cut -d '=' -f 1)"
+          
             if [ ! -d "${{ env.BASE_PATH }}/$folder" ]; then
               echo "Error: ${{ env.BASE_PATH }}/$folder directory not found." >> $GITHUB_STEP_SUMMARY
               exit 1
