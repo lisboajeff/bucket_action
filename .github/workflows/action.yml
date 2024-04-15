@@ -113,7 +113,9 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Sync files to S3
-        run: python bucket_python/src/main.py "${{ env.EXPRESSION_FILE_PATHS }}"
+        run: |
+          echo "${{ env.EXPRESSION_FILE_PATHS }}"
+          python bucket_python/src/main.py "${{ env.EXPRESSION_FILE_PATHS }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
