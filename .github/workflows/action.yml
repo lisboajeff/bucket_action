@@ -66,11 +66,15 @@ jobs:
           
           IFS=',' read -ra PAIRS <<< "$input"
           
+          echo "Verifier $EXPRESSION_FILE_PATHS"
+          
           for pair in "${PAIRS[@]}"; do
           
             folder="${pair%%:*}"
           
             extension="${pair##*:}"
+          
+            echo "folder=$folder extension=$extension"
           
             if [ ! -d "${{ env.BASE_PATH }}/$folder" ]; then
               echo "Error: ${{ env.BASE_PATH }}/$folder directory not found." >> $GITHUB_STEP_SUMMARY
@@ -125,7 +129,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Sync files to S3
-        run: python bucket_python/src/main.py ${{ env.EXPRESSION_FILE_PATHS }}
+        run: python bucket_python/src/main.py "${{ env.EXPRESSION_FILE_PATHS }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
