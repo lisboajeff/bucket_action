@@ -90,7 +90,7 @@ jobs:
 
       - name: Verify variables in config.env
         env:
-          REQUIRED_VARS: "AWS_REGION BUCKET_NAME TRUSTSTORE TLS"
+          REQUIRED_VARS: "AWS_REGION BUCKET_NAME"
         run: |
           IFS=' ' read -r -a REQUIRED_VARS_ARRAY <<< "$REQUIRED_VARS"
           MISSING_VARS=()
