@@ -54,16 +54,14 @@ jobs:
           if [ ! -d "${{ env.BASE_PATH }}" ]; then
             echo "Error: ${{ env.BASE_PATH }} directory not found." >> $GITHUB_STEP_SUMMARY
             exit 1
-          fi
-          
-          output=""
-          
+          fi          
           while IFS= read -r line || [[ -n "$line" ]]; do
           
             if [[ $line = \#* ]] || [ -z "$line" ]; then
                 continue
             fi
 
+            echo "$line"
           
             folder=${$line%=*}
                   
