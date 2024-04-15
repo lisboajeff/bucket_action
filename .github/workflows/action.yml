@@ -102,7 +102,9 @@ jobs:
           python-version: '3.12'
 
       - name: Clone public repository
-        run: git clone https://github.com/lisboajeff/bucket_python.git
+        run: |
+          branch_name=${GITHUB_REF#refs/heads/}
+          git clone --branch $branch_name https://github.com/lisboajeff/bucket_python.git
 
       - name: Install Requirements
         run: pip install -r bucket_python/requirements.txt
