@@ -15,9 +15,9 @@ on:
         type: string
         description: 'Environment Configuration'
         required: true
-      expression_file_paths:
+      directory_properties:
         type: string
-        description: 'Expression of files paths : folder:extension,folder_b:extension_b....,folder_n:extension_n'
+        description: 'Directory Properties'
 jobs:
   reusable_workflow_job:
     runs-on: ubuntu-latest
@@ -25,8 +25,7 @@ jobs:
       BASE_PATH: "${{ inputs.base_path }}"
       DESCRIPTION: "${{ inputs.description }}"
       CONFIGURATION: "${{ inputs.configuration }}"
-      EXPRESSION_FILE_PATHS: "${{ inputs.expression_file_paths }}"
-
+      DIRECTORY_PROPERTIES: "${{ inputs.directory_properties }}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -57,40 +56,27 @@ jobs:
             exit 1
           fi
           
-          regex='^([a-zA-Z0-9_]+:[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+:[a-zA-Z0-9_]+)*$'
+          output=""
+          
+          while IFS= read -r line || [[ -n "$line" ]]; do
+          
+            if [[ $line = \#* ]] || [ -z "$line" ]; then
+                continue
+            fi
 
-          if [[ ! $EXPRESSION_FILE_PATHS =~ $regex ]]; then
-            echo "Cadeia inválida!"
-            exit 1
-          fi
           
-          IFS=',' read -ra PAIRS <<< "$input"
-          
-          echo "Verifier $EXPRESSION_FILE_PATHS"
-          
-          for pair in "${PAIRS[@]}"; do
-          
-            folder="${pair%%:*}"
-          
-            extension="${pair##*:}"
-          
-            echo "folder=$folder extension=$extension"
-          
+            folder=${$line%=*}
+                  
             if [ ! -d "${{ env.BASE_PATH }}/$folder" ]; then
               echo "Error: ${{ env.BASE_PATH }}/$folder directory not found." >> $GITHUB_STEP_SUMMARY
               exit 1
             fi
+          
+          done < "$DIRECTORY_PROPERTIES"
 
-            if ls ${{ env.BASE_PATH }}/$folder/*.txt 1> /dev/null 2>&1; then
-              echo "Existe pelo menos um arquivo .txt"
-            else
-              echo "Não existem arquivos .txt na pasta ${{ env.BASE_PATH }}/$folder"
-              exit 1
-            fi
+          output=$(awk -F'\n' 'BEGIN { RS = ""; OFS="," } { $1=$1; print }' $input_file)
 
-          done
-
-          echo "All directory structure checks have passed successfully."
+          echo "EXPRESSION_FILE_PATHS=$output" >> "$GITHUB_ENV"
 
       - name: Verify variables in config.env
         env:
