@@ -14,11 +14,12 @@ class Config:
 
     def __init__(self):
         parser = argparse.ArgumentParser(description="Arguments")
-        parser.add_argument('pairs', type=str, help="A comma-separated list of folder:extension pairs.")
+        parser.add_argument('pairs', type=str, help="A comma-separated list of folder=extension pairs.")
         arguments = parser.parse_args()
         self.pairs: str = arguments.pairs
 
     def get_directories(self) -> list[Directory]:
+        print(self.pairs)
         regex = re.compile('^([a-zA-Z0-9_]+=[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+=[a-zA-Z0-9_]+)*$')
         if not regex.match(self.pairs):
             raise ValueError("Input string is invalid.")
