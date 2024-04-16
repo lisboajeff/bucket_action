@@ -34,14 +34,14 @@ jobs:
         run: |
           
           if [ ! -f "${{ env.DIRECTORY_PROPERTIES }}" ]; then
-            echo "File .properties not found: ${{ env.DIRECTORY_PROPERTIES }}"
+            echo "File .properties not found: ${{ env.DIRECTORY_PROPERTIES }}" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           
           ENV_FILE=${{ env.CONFIGURATION }}
           
           if [ ! -f "$ENV_FILE" ]; then
-             echo "File .env not found: $ENV_FILE"
+             echo "File .env not found: $ENV_FILE" >> $GITHUB_STEP_SUMMARY
              exit 1
           fi
           
