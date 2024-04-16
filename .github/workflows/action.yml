@@ -72,8 +72,10 @@ jobs:
           
           done < "$DIRECTORY_PROPERTIES"
 
-          output=$(awk -F'\n' 'BEGIN { RS = ""; OFS="," } { $1=$1; print }' $input_file)
+          output=$(awk -F'\n' 'BEGIN { RS = ""; OFS="," } { $1=$1; print }' $DIRECTORY_PROPERTIES)
 
+          echo "output is : $output"
+          
           echo "EXPRESSION_FILE_PATHS=$output" >> "$GITHUB_ENV"
 
       - name: Verify variables in config.env
@@ -114,7 +116,6 @@ jobs:
 
       - name: Sync files to S3
         run: |
-          echo "${{ env.EXPRESSION_FILE_PATHS }}"
           python bucket_python/src/main.py "${{ env.EXPRESSION_FILE_PATHS }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
