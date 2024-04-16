@@ -19,10 +19,9 @@ class Config:
         self.pairs: str = arguments.pairs
 
     def get_directories(self) -> list[Directory]:
-        print(self.pairs)
         regex = re.compile('^([a-zA-Z0-9_]+=[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+=[a-zA-Z0-9_]+)*$')
         if not regex.match(self.pairs):
-            raise ValueError("Input string is invalid.")
+            raise ValueError(f"Input({self.pairs}) string is invalid.")
         return [Directory(pair.split('=')[0], pair.split('=')[1]) for pair in self.pairs.split(',')]
 
     @staticmethod
