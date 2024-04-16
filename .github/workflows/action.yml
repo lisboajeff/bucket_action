@@ -68,6 +68,15 @@ jobs:
             fi
 
             echo "$line"
+            
+            LINE_REGEX='^([a-zA-Z0-9_]+=[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+=[a-zA-Z0-9_]+)*$'
+          
+            if ! [[ "$line" =~ $LINE_REGEX ]]; then
+              echo "The line on file ($DIRECTORY_PROPERTIES) does not match the expected format." >> $GITHUB_STEP_SUMMARY
+              echo "## Expected Format" >> $GITHUB_STEP_SUMMARY
+              echo -e "folder=extension\nfolder_b=extension_b\n.\n.\n.\nfolder_n=extension_n" >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
           
             folder="$(echo $line | cut -d '=' -f 1)"
           
