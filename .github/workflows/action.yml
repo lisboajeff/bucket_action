@@ -33,19 +33,24 @@ jobs:
       - name: Load Environment Configurations
         run: |
           
+          if [ ! -f "${{ env.DIRECTORY_PROPERTIES }}" ]; then
+            echo "File .properties not found: ${{ env.DIRECTORY_PROPERTIES }}"
+            exit 1
+          fi
+          
           ENV_FILE=${{ env.CONFIGURATION }}
           
           if [ ! -f "$ENV_FILE" ]; then
-              echo "File .env not found: $ENV_FILE"
-              exit 1
+             echo "File .env not found: $ENV_FILE"
+             exit 1
           fi
           
           while IFS= read -r line || [[ -n "$line" ]]; do
-              if [[ $line = \#* ]] || [ -z "$line" ]; then
-                  continue
-              fi
-              echo "$line"
-              echo "$line" >> "$GITHUB_ENV"
+             if [[ $line = \#* ]] || [ -z "$line" ]; then
+                 continue
+             fi
+             echo "$line"
+             echo "$line" >> "$GITHUB_ENV"
           done <"$ENV_FILE"
 
       - name: Verify Directory Structure and Configuration File
@@ -54,7 +59,8 @@ jobs:
           if [ ! -d "${{ env.BASE_PATH }}" ]; then
             echo "Error: ${{ env.BASE_PATH }} directory not found." >> $GITHUB_STEP_SUMMARY
             exit 1
-          fi          
+          fi
+
           while IFS= read -r line || [[ -n "$line" ]]; do
           
             if [[ $line = \#* ]] || [ -z "$line" ]; then
