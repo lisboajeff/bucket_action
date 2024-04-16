@@ -14,15 +14,15 @@ class Config:
 
     def __init__(self):
         parser = argparse.ArgumentParser(description="Arguments")
-        parser.add_argument('pairs', type=str, help="A comma-separated list of folder:extension pairs.")
+        parser.add_argument('pairs', type=str, help="A comma-separated list of folder=extension pairs.")
         arguments = parser.parse_args()
         self.pairs: str = arguments.pairs
 
     def get_directories(self) -> list[Directory]:
-        regex = re.compile('^([a-zA-Z0-9_]+:[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+:[a-zA-Z0-9_]+)*$')
+        regex = re.compile('^([a-zA-Z0-9_]+=[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+=[a-zA-Z0-9_]+)*$')
         if not regex.match(self.pairs):
-            raise ValueError("Input string is invalid.")
-        return [Directory(pair.split(':')[0], pair.split(':')[1]) for pair in self.pairs.split(',')]
+            raise ValueError(f"Input({self.pairs}) string is invalid.")
+        return [Directory(pair.split('=')[0], pair.split('=')[1]) for pair in self.pairs.split(',')]
 
     @staticmethod
     def get_aws_region():
