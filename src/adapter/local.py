@@ -1,7 +1,7 @@
 import hashlib
 import os
 
-from usecases.info import Information
+from src.usecases.info import Information
 
 
 class Local:

@@ -1,19 +1,43 @@
-from adapter.local import Local
-from adapter.s3 import S3
-from usecases.info import Information
+from src.adapter.local import Local
+from src.config import Directory
+from src.usecases.action import Action, ActionWrite
+from src.usecases.info import Information
+
+from src.usecases.bucket import Bucket
 
 
 class FileSynchronizer:
 
-    def __init__(self, s3: S3, device: Local):
-        self.s3 = s3
+    def process(self, file_extension: str, file_path: str = ''):
+        pass
+
+
+class FileSynchronizerDirectories(FileSynchronizer):
+
+    def __init__(self, synchronizer: FileSynchronizer, action: ActionWrite):
+        self.synchronizer = synchronizer
+        self.action = action
+
+    def process(self, file_extension: str, file_path: str = ''):
+        self.synchronizer.process(file_extension, file_path)
+    
+    def process_directories(self, directories: list[Directory]):
+        for directory in directories:
+            self.process(file_extension=directory.extension, file_path=directory.file_path)
+        self.action.export()
+
+
+class FileSynchronizerAtomic(FileSynchronizer):
+
+    def __init__(self, bucket: Bucket, device: Local):
+        self.bucket = bucket
         self.device = device
 
     def process(self, file_extension: str, file_path: str = ''):
 
         local_files: dict[str, Information] = self.device.find_files(file_extension=file_extension, file_path=file_path)
 
-        s3_files: dict[str, str] = self.s3.get_hashed_s3_objects(file_path=file_path)
+        s3_files: dict[str, str] = self.bucket.all(file_path=file_path)
 
         modified_files: dict[str, Information] = self._detect_modified_files(local_files=local_files, s3_files=s3_files)
 
@@ -23,9 +47,9 @@ class FileSynchronizer:
 
     def _manage_files(self, modified_files: dict[str, Information], missing_files: set[Information]):
         for filename, info in modified_files.items():
-            self.s3.upload_to_bucket(filename, info)
+            self.bucket.upload(filename, info)
         for info in missing_files:
-            self.s3.delete_object(info)
+            self.bucket.remove(info)
 
     @staticmethod
     def _find_missing_files(local_files: dict[str, Information], s3_files: dict[str, str]) -> set[Information]:
