@@ -1,9 +1,8 @@
 from adapter.local import Local
 from config import Config
-from src.usecases.action import Action
-from src.usecases.bucket import Bucket
-from src.usecases.synchronize import FileSynchronizerDirectories
-from usecases.synchronize import FileSynchronizerAtomic
+from usecases.action import Action
+from usecases.bucket import Bucket
+from usecases.synchronize import FileSynchronizerDirectories, FileSynchronizerAtomic
 
 
 def main():

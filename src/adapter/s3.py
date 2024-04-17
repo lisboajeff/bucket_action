@@ -1,7 +1,7 @@
 from botocore.client import BaseClient
 
-from src.usecases.bucket import Bucket
-from src.usecases.info import Information
+from usecases.bucket import Bucket
+from usecases.info import Information
 
 
 class S3(Bucket):

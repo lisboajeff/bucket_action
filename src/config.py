@@ -4,11 +4,11 @@ import re
 
 import boto3
 
-from src.adapter.s3 import S3
-from src.summary import Summary, SummaryVisitor
-from src.usecases.action import ActionInsert, Action
-from src.usecases.bucket import Bucket, BucketActionProxy
-from src.usecases.bucket_planning import BucketPlanning
+from adapter.s3 import S3
+from summary import Summary, SummaryVisitor
+from usecases.action import Action, ActionInsert
+from usecases.bucket import Bucket, BucketActionProxy
+from usecases.bucket_planning import BucketPlanning
 
 
 class Directory:

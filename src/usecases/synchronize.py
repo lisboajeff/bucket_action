@@ -1,8 +1,8 @@
-from src.adapter.local import Local
-from src.config import Directory
-from src.usecases.action import ActionWrite
-from src.usecases.bucket import Bucket
-from src.usecases.info import Information
+from adapter.local import Local
+from config import Directory
+from usecases.action import ActionWrite
+from usecases.bucket import Bucket
+from usecases.info import Information
 
 
 class FileSynchronizer:

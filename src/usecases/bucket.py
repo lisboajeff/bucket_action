@@ -1,5 +1,5 @@
-from src.usecases.action import ActionInsert
-from src.usecases.info import Information
+from usecases.action import ActionInsert
+from usecases.info import Information
 
 
 class Bucket:

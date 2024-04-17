@@ -1,4 +1,4 @@
-from src.usecases.info import Information
+from usecases.info import Information
 
 
 class ActionInsert:

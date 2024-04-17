@@ -1,4 +1,4 @@
-from src.usecases.action import Action
+from usecases.action import Action
 from usecases.info import Information
 
 
