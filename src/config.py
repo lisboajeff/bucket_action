@@ -62,13 +62,15 @@ class Config:
             report_without_actions = 'No file was added or removed.'
             text = 'The report presents the changes that were synchronized'
 
-        return Summary(self.get_description(),
-                       filename=filename,
-                       visitor=type('SummaryVisitor', (SummaryVisitor,),
-                                    {'report_without_actions': lambda _: report_without_actions,
-                                     'text': lambda _: text
-                                     })()
-                       )
+        class SummaryVisitorImpl(SummaryVisitor):
+
+            def report_without_actions(self) -> str:
+                return report_without_actions
+
+            def title(self) -> str:
+                return text
+
+        return Summary(self.get_description(), filename=filename, visitor=SummaryVisitorImpl())
 
     def create_bucket_instance(self, action: ActionInsert) -> Bucket:
 
