@@ -10,6 +10,12 @@ class SummaryVisitor:
     def title(self) -> str:
         pass
 
+    def uploaded_message(self) -> str:
+        pass
+
+    def remove_message(self, ) -> str:
+        pass
+
 
 class Summary(Action):
 
@@ -28,12 +34,13 @@ class Summary(Action):
             lines.append("|---| ---  |---| --- | --- |")
             for info in self.actions["Uploaded"]:
                 lines.append(
-                    f"| Uploaded    | {self.description} |  {info.get_file_path()} | {info.get_old_hash()} "
-                    f"| {info.get_hash()} |")
+                    f"| {self.visitor.uploaded_message()}    | {self.description} |  {info.get_file_path()} "
+                    f"| {info.get_old_hash()} | {info.get_hash()} |")
             for info in self.actions["Removed"]:
                 lines.append(
-                    f"| Removed     | {self.description} | {info.get_file_path()} | {info.get_old_hash()} "
-                    f"| {info.get_hash()} |")
+                    f"| {self.visitor.remove_message()}  | {self.description} | {info.get_file_path()} "
+                    f"| {info.get_old_hash()} | {info.get_hash()} |")
+
         return lines
 
     def export(self):

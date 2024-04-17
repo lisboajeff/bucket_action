@@ -58,11 +58,21 @@ class Config:
         if self.type == 'planning':
             report_without_actions = 'no files to be added or removed in planning'
             text = 'The report presents the change planning'
+            uploaded_message = 'Upload plan'
+            remove_message = 'Removal plan'
         else:
             report_without_actions = 'No file was added or removed.'
             text = 'The report presents the changes that were synchronized'
+            uploaded_message = 'Uploaded'
+            remove_message = 'Removed'
 
         class SummaryVisitorImpl(SummaryVisitor):
+
+            def uploaded_message(self) -> str:
+                return uploaded_message
+
+            def remove_message(self) -> str:
+                return remove_message
 
             def report_without_actions(self) -> str:
                 return report_without_actions
