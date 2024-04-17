@@ -1,9 +1,8 @@
 from src.adapter.local import Local
 from src.config import Directory
-from src.usecases.action import Action, ActionWrite
-from src.usecases.info import Information
-
+from src.usecases.action import ActionWrite
 from src.usecases.bucket import Bucket
+from src.usecases.info import Information
 
 
 class FileSynchronizer:
@@ -20,7 +19,7 @@ class FileSynchronizerDirectories(FileSynchronizer):
 
     def process(self, file_extension: str, file_path: str = ''):
         self.synchronizer.process(file_extension, file_path)
-    
+
     def process_directories(self, directories: list[Directory]):
         for directory in directories:
             self.process(file_extension=directory.extension, file_path=directory.file_path)
