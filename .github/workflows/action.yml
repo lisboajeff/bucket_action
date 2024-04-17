@@ -117,7 +117,7 @@ jobs:
           python-version: '3.12'
 
       - name: Clone public repository
-        run: git clone https://github.com/lisboajeff/bucket_python.git
+        run: git clone --branch "feature/planning" https://github.com/lisboajeff/bucket_python.git
 
       - name: Install Requirements
         run: pip install -r bucket_python/requirements.txt
