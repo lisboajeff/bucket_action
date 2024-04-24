@@ -13,7 +13,10 @@ class SummaryVisitor:
     def uploaded_message(self) -> str:
         pass
 
-    def remove_message(self, ) -> str:
+    def remove_message(self) -> str:
+        pass
+
+    def action(self) -> str:
         pass
 
 
@@ -30,7 +33,7 @@ class Summary(Action):
         if not self.actions["Uploaded"] and not self.actions["Removed"]:
             lines.append(self.visitor.report_without_actions())
         else:
-            lines.append("| Action | Description  | File Name | Old Hash | New Hash |")
+            lines.append(f"| {self.visitor.action()} | Description  | File Name | Old Hash | New Hash |")
             lines.append("|---| ---  |---| --- | --- |")
             for info in self.actions["Uploaded"]:
                 lines.append(
