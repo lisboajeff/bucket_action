@@ -66,7 +66,8 @@ class Config:
 
         path_parts: [str] = self.get_base_path().split("/")
 
-        text: str = f'{text}\nCountry: {path_parts[0]}\nEnvironment: {path_parts[1]}\n Description: {self.get_description()}'
+        text: str = (f'{text}\nCountry: {path_parts[0]}\nEnvironment: {path_parts[1]}\n Description: '
+                     f'{self.get_description()}')
 
         class SummaryVisitorImpl(SummaryVisitor):
 
