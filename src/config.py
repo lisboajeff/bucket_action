@@ -57,17 +57,15 @@ class Config:
 
         if self.type == 'planning':
             report_without_actions = 'no files to be added or removed in planning'
-            text = 'The report presents the change planning'
             action = "Planning"
         else:
             report_without_actions = 'No file was added or removed.'
-            text = 'The report presents the changes that were synchronized'
             action = "Action"
 
         path_parts: [str] = self.get_base_path().split("/")
 
-        text: str = (f'{text}\nCountry: {path_parts[0]}\nEnvironment: {path_parts[1]}\n Description: '
-                     f'{self.get_description()}')
+        text: str = (f'\nCountry: {path_parts[0]}\nEnvironment: {path_parts[1]}\n Description: '
+                     f'{self.get_description()}\n')
 
         class SummaryVisitorImpl(SummaryVisitor):
 

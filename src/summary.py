@@ -33,7 +33,7 @@ class Summary(Action):
             lines.append(self.visitor.report_without_actions())
         else:
             lines.append(f"| {self.visitor.action()} | File Name | Old Hash | New Hash |")
-            lines.append("|---| ---  |---| --- | --- |")
+            lines.append("|---| ---  |---| ---")
             for info in self.actions["Uploaded"]:
                 lines.append(
                     f"| {self.visitor.uploaded_message()}  |  {info.get_file_path()} "
