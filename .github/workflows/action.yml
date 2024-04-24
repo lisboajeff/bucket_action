@@ -2,6 +2,13 @@ name: Python CLI to Synchronize Certificates
 
 on:
   workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        description: 'ACCESS KEY'
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: 'SECRET ACESS KEY'
+        required: true
     inputs:
       base_path:
         type: string
