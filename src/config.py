@@ -64,6 +64,10 @@ class Config:
             text = 'The report presents the changes that were synchronized'
             action = "Action"
 
+        path_parts: [str] = self.get_base_path().split("/")
+
+        text: str = f'{text}\nCountry: {path_parts[0]}\nEnvironment: {path_parts[1]}\n Description: {self.get_description()}'
+
         class SummaryVisitorImpl(SummaryVisitor):
 
             def action(self) -> str:
@@ -81,7 +85,7 @@ class Config:
             def title(self) -> str:
                 return text
 
-        return Summary(self.get_description(), filename=filename, visitor=SummaryVisitorImpl())
+        return Summary(filename=filename, visitor=SummaryVisitorImpl())
 
     def create_bucket_instance(self, action: ActionInsert) -> Bucket:
 

@@ -22,9 +22,8 @@ class SummaryVisitor:
 
 class Summary(Action):
 
-    def __init__(self, description: str, filename: str, visitor: SummaryVisitor):
+    def __init__(self, filename: str, visitor: SummaryVisitor):
         self.actions: dict[str, list[Information]] = {"Uploaded": [], "Removed": []}
-        self.description: str = description
         self.filename: str = filename
         self.visitor = visitor
 
@@ -33,15 +32,15 @@ class Summary(Action):
         if not self.actions["Uploaded"] and not self.actions["Removed"]:
             lines.append(self.visitor.report_without_actions())
         else:
-            lines.append(f"| {self.visitor.action()} | Description  | File Name | Old Hash | New Hash |")
+            lines.append(f"| {self.visitor.action()} | File Name | Old Hash | New Hash |")
             lines.append("|---| ---  |---| --- | --- |")
             for info in self.actions["Uploaded"]:
                 lines.append(
-                    f"| {self.visitor.uploaded_message()}    | {self.description} |  {info.get_file_path()} "
+                    f"| {self.visitor.uploaded_message()}  |  {info.get_file_path()} "
                     f"| {info.get_old_hash()} | {info.get_hash()} |")
             for info in self.actions["Removed"]:
                 lines.append(
-                    f"| {self.visitor.remove_message()}  | {self.description} | {info.get_file_path()} "
+                    f"| {self.visitor.remove_message()} | {info.get_file_path()} "
                     f"| {info.get_old_hash()} | {info.get_hash()} |")
 
         return lines
