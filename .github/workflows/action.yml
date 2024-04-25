@@ -1,9 +1,5 @@
 name: Python CLI to Synchronize Certificates
 
-permissions:
-  contents: read
-  issues: write
-  pull-requests: write
 
 on:
   workflow_call:
@@ -26,6 +22,7 @@ on:
       type:
         type: string
         description: 'Type Of Synchronizer Planning or Apply'
+
 jobs:
   reusable_workflow_job:
     runs-on: ubuntu-latest
