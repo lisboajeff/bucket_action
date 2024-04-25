@@ -1,13 +1,13 @@
 from adapter.local import Local
-from config import Directory
+from usecases.bucket.directory import Directory
 from usecases.action import ActionWrite
-from usecases.bucket import Bucket
+from usecases.bucket.bucket import Bucket
 from usecases.info import Information
 
 
 class FileSynchronizer:
 
-    def process(self, file_extension: str, file_path: str = ''):
+    def process(self, directory: Directory):
         pass
 
 
@@ -17,12 +17,12 @@ class FileSynchronizerDirectories(FileSynchronizer):
         self.synchronizer = synchronizer
         self.action = action
 
-    def process(self, file_extension: str, file_path: str = ''):
-        self.synchronizer.process(file_extension, file_path)
+    def process(self, directory: Directory):
+        self.synchronizer.process(directory)
 
     def process_directories(self, directories: list[Directory]):
         for directory in directories:
-            self.process(file_extension=directory.extension, file_path=directory.file_path)
+            self.process(directory=directory)
         self.action.export()
 
 
@@ -32,23 +32,17 @@ class FileSynchronizerAtomic(FileSynchronizer):
         self.bucket = bucket
         self.device = device
 
-    def process(self, file_extension: str, file_path: str = ''):
+    def process(self, directory: Directory):
 
-        local_files: dict[str, Information] = self.device.find_files(file_extension=file_extension, file_path=file_path)
+        local_files: dict[str, Information] = self.device.find_files(directory=directory)
 
-        s3_files: dict[str, str] = self.bucket.all(file_path=file_path)
+        s3_files: dict[str, str] = directory.find_files_bucket(bucket=self.bucket)
 
         modified_files: dict[str, Information] = self._detect_modified_files(local_files=local_files, s3_files=s3_files)
 
         missing_files: set[Information] = self._find_missing_files(local_files=local_files, s3_files=s3_files)
 
-        self._manage_files(modified_files=modified_files, missing_files=missing_files)
-
-    def _manage_files(self, modified_files: dict[str, Information], missing_files: set[Information]):
-        for filename, info in modified_files.items():
-            self.bucket.upload(filename, info)
-        for info in missing_files:
-            self.bucket.remove(info)
+        directory.manage_files(bucket=self.bucket, modified_files=modified_files, missing_files=missing_files)
 
     @staticmethod
     def _find_missing_files(local_files: dict[str, Information], s3_files: dict[str, str]) -> set[Information]:

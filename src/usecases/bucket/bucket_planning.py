@@ -1,4 +1,4 @@
-from usecases.bucket import Bucket
+from usecases.bucket.bucket import Bucket
 from usecases.info import Information
 
 

@@ -7,15 +7,9 @@ import boto3
 from adapter.s3 import S3
 from summary import Summary, SummaryVisitor
 from usecases.action import Action, ActionInsert
-from usecases.bucket import Bucket, BucketActionProxy
-from usecases.bucket_planning import BucketPlanning
-
-
-class Directory:
-
-    def __init__(self, file_path: str, extension: str):
-        self.file_path = file_path
-        self.extension = extension
+from usecases.bucket.bucket import Bucket, BucketActionProxy
+from usecases.bucket.bucket_planning import BucketPlanning
+from usecases.bucket.directory import Directory
 
 
 class Config:
@@ -30,12 +24,14 @@ class Config:
         self.type: str = arguments.type
         if self.type not in self.types:
             raise ValueError(f"Type is invalid: {type}")
+        self.virtual_path = os.getenv('VIRTUAL_PATH')
 
     def get_directories(self) -> list[Directory]:
         regex = re.compile('^([a-zA-Z0-9_]+=[a-zA-Z0-9_]+)(,[a-zA-Z0-9_]+=[a-zA-Z0-9_]+)*$')
         if not regex.match(self.pairs):
             raise ValueError(f"Input({self.pairs}) string is invalid.\n Pattern is : {regex.pattern}")
-        return [Directory(pair.split('=')[0], pair.split('=')[1]) for pair in self.pairs.split(',')]
+        return [Directory(virtual_path=self.virtual_path, file_path=pair.split('=')[0], extension=pair.split('=')[1])
+                for pair in self.pairs.split(',')]
 
     @staticmethod
     def _get_aws_region():
@@ -62,10 +58,7 @@ class Config:
             report_without_actions = 'No file was added or removed.'
             action = "Action"
 
-        path_parts: [str] = self.get_base_path().split("/")
-
-        text: str = (f'\nCountry: {path_parts[0]}\nEnvironment: {path_parts[1]}\n Description: '
-                     f'{self.get_description()}\n')
+        text: str = f'{self.get_description()}\n'
 
         class SummaryVisitorImpl(SummaryVisitor):
 

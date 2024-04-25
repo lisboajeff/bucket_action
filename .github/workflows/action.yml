@@ -98,7 +98,7 @@ jobs:
 
       - name: Verify variables in config.env
         env:
-          REQUIRED_VARS: "AWS_REGION BUCKET_NAME"
+          REQUIRED_VARS: "AWS_REGION BUCKET_NAME VIRTUAL_PATH"
         run: |
           IFS=' ' read -r -a REQUIRED_VARS_ARRAY <<< "$REQUIRED_VARS"
           MISSING_VARS=()

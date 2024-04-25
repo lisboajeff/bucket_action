@@ -1,7 +1,7 @@
 from adapter.local import Local
 from config import Config
 from usecases.action import Action
-from usecases.bucket import Bucket
+from usecases.bucket.bucket import Bucket
 from usecases.synchronize import FileSynchronizerDirectories, FileSynchronizerAtomic
 
 
