@@ -156,7 +156,7 @@ jobs:
             const issue_number = context.payload.pull_request.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const body = fs.readFileSync(s3_sync_report.md, 'utf8');
+            const body = fs.readFileSync('s3_sync_report.md', 'utf8');
             console.log("Body content:", body);  // Debug: Print the body content
             if (body.trim() === '') {
               console.log('The body content is empty.');
