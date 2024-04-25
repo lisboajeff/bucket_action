@@ -1,5 +1,10 @@
 name: Python CLI to Synchronize Certificates
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 on:
   workflow_call:
     inputs:
