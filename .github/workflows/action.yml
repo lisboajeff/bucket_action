@@ -150,6 +150,7 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const fs = require('fs');
             const issue_number = context.payload.pull_request.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
